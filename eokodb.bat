@@ -1,3 +1,3 @@
 @echo off
-set /p urlVar=<eokodburl.txt
+set /p urlVar=<C:\MilordShortcuts\eokodburl.txt
 start chrome %urlVar%
