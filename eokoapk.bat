@@ -1,2 +1,2 @@
 @echo off
-%SystemRoot%\explorer.exe "D:\Projects\Eoko3\platforms\android\build\outputs\apk"
+%SystemRoot%\explorer.exe "D:\Projects\eokoApp\platforms\android\build\outputs\apk"
