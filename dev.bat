@@ -4,9 +4,6 @@ if [%1]==[] goto regdev
 
 IF NOT EXIST D:\Projects\%arg1% goto failpath
 cd /d D:\Projects\%arg1%
-git pull
-subl src
-ionic serve
 
 :failpath
 echo "Folder doesnt exist. going to devroot"
