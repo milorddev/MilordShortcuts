@@ -1,2 +1,2 @@
 @echo off
-ionic cordova run android --release
+ionic cordova run android --release --prod
