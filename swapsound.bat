@@ -14,11 +14,7 @@ if %input%==2 (
 ) 
 if NOT %input%==1 (
 	if NOT %input%==2 (
-		echo Only 1 or 2 can be selected
-		echo Choose 1 for Speaker
-		echo Choose 2 for Headphones
-		pause
-		Exit /b 0
+		goto noparam
 ))
 
 
