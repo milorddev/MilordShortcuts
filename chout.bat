@@ -5,7 +5,7 @@ if [%1] NEQ [] goto mainAction
 
 :mainAction
 REM echo %cd%\%arg1%
-git checkout %cd%\%arg1%
+git checkout %arg1%
 EXIT /B
 
 :defaultAction
