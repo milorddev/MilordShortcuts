@@ -1,0 +1,5 @@
+
+if [ -f ~/.milord_aliases ]; then
+    . ~/.milord_aliases
+fi
+
