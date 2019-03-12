@@ -1,6 +1,6 @@
 @setlocal enableextensions enabledelayedexpansion
 @echo off
-set file=config.ini
+set file=%~dp0\config.ini
 set area=[%~1]
 set key=value
 set currarea=
