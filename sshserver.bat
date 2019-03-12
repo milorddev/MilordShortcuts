@@ -1,3 +1,7 @@
 @echo off
-set /p sshDomain=<C:\MilordShortcuts\serverSite.txt
-bash -c "ssh root@%sshDomain%"
+for /f "delims=" %%a in ('call ini.cmd ssh') do (
+    set val=%%a
+)
+set sshpath=%val%
+
+bash -c "ssh root@%sshpath%"
