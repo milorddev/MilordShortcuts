@@ -1,3 +1,11 @@
-alias dev="cd /home/cababy/Projects"
+#general shortcuts
+alias dev="cd ~/Projects"
+alias milord="nano ~/.milord_aliases"
+alias refreshenv="source ~/.bashrc"
+alias milord-update="cp ~/.milord_aliases ~/Projects/MilordShortcuts/.milord_aliases"
 
+#git command shortcuts
+alias stats="git status"
+alias adal="git add ."
+alias ginit="git init"
 
