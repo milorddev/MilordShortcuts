@@ -6,8 +6,18 @@ MUSIC_URL=https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ-
 #general shortcuts
 alias dev="cd $DEV_ROOT"
 alias milord="nano ~/.milord_aliases"
-alias refreshenv="source ~/.bashrc"
 alias milord-update="cp ~/.milord_aliases $DEV_ROOT/MilordShortcuts/.milord_aliases"
+function refreshenv()
+{
+    if [ -n "`$SHELL -c 'echo $ZSH_VERSION'`" ]; then
+       source ~/.zshrc
+    elif [ -n "`$SHELL -c 'echo $BASH_VERSION'`" ]; then
+       source ~/.bashrc
+    else
+       echo "Looks like .milord_aliases is not compatible with your shell environment"
+       echo "Feel free to make a pull request!"
+    fi
+}
 
 #docker
 alias dope="docker-compose"
@@ -22,18 +32,9 @@ alias adal="git add ."
 alias ginit="git init"
 alias pull="git pull"
 alias push="git push"
-
-
-
-
-
-
-
-
-
-
+alias glog="git log"
 # ------------------------------------------------
-# show current git branch for all dev repos - Created by Greg Ruane
+#Created by Greg Ruane
 # ------------------------------------------------
 function gitall-branches()
 {
@@ -54,10 +55,5 @@ function gitall-branches()
                 echo "$line"
             fi
         done
-        # TODO sort output
-#        for row in $output; do
-#            echo "$row"
-#        done
-
     )
 }
