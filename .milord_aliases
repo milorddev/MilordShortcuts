@@ -1,11 +1,63 @@
+#configs - edit them to your liking
+DEV_ROOT=~/Projects
+MUSIC_URL=https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ-wxIJ
+
+
 #general shortcuts
-alias dev="cd ~/Projects"
+alias dev="cd $DEV_ROOT"
 alias milord="nano ~/.milord_aliases"
 alias refreshenv="source ~/.bashrc"
-alias milord-update="cp ~/.milord_aliases ~/Projects/MilordShortcuts/.milord_aliases"
+alias milord-update="cp ~/.milord_aliases $DEV_ROOT/MilordShortcuts/.milord_aliases"
+
+#docker
+alias dope="docker-compose"
+
+
+#fun stuff
+alias music="chromium $MUSIC_URL &"
 
 #git command shortcuts
 alias stats="git status"
 alias adal="git add ."
 alias ginit="git init"
+alias pull="git pull"
+alias push="git push"
 
+
+
+
+
+
+
+
+
+
+# ------------------------------------------------
+# show current git branch for all dev repos - Created by Greg Ruane
+# ------------------------------------------------
+function gitall-branches()
+{
+    # subshell to revert cd
+    (
+        output=()
+        for subdir in $(find $DEV_ROOT -maxdepth 2 -type d | sort); do
+            if [ -L "$subdir" ]; then
+                continue
+            fi
+
+            # git submodules use a file, standalones use a dir
+            if [ -f "$subdir/.git" ] || [ -d "$subdir/.git" ]; then
+                branch="[$(cd "$subdir"; git  branch | grep '^\*' | cut -d' ' -f2)]"
+                # printf "%-30s %-30s\n" $(basename $subdir) $branch
+                line=$(printf "%-30s %-30s\n" $(basename $subdir) $branch)
+                output+=$line
+                echo "$line"
+            fi
+        done
+        # TODO sort output
+#        for row in $output; do
+#            echo "$row"
+#        done
+
+    )
+}
