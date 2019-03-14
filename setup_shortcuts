@@ -1,0 +1,18 @@
+#!/bin/bash
+
+cp .milord_aliases ~/.milord_aliases
+
+#regular bash terminal
+if [ -f ~/.bashrc ] 
+then
+    cat insert_into_bashrc >> ~/.bashrc
+    source ~/.bashrc
+fi
+
+#zsh terminal
+if [ -f ~/.zshrc ] 
+then
+    cat insert_into_bashrc >> ~/.zshrc
+    source ~/.zshrc
+fi
+

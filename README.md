@@ -4,10 +4,8 @@ a bunch of batch shortcuts to make dev stuff really quick (example: git commit -
 
 -- LINUX USE
 
-run these series of commands to get the shortcuts to work
+run this:
 ```
-cp .milord_aliases ~/.milord_aliases
-cat insert_into_bashrc >> ~/.bashrc
-source ~/.bashrc
+chmod 777 setup_shortcuts && ./setup_shortcuts
 ```
 after that, your shortcuts should be working

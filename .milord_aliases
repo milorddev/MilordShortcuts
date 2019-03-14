@@ -33,10 +33,13 @@ alias ginit="git init"
 alias pull="git pull"
 alias push="git push"
 alias glog="git log"
-# ------------------------------------------------
-#Created by Greg Ruane
-# ------------------------------------------------
-function gitall-branches()
+
+function gitmit()
+{
+    git commit -m "$1"
+}
+
+function gitall-branches() #Created by Greg Ruane
 {
     # subshell to revert cd
     (
