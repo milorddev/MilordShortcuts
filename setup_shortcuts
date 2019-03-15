@@ -12,6 +12,7 @@ fi
 #zsh terminal
 if [ -f ~/.zshrc ] 
 then
+    echo unsetopt nomatch >> ~/.zshrc
     cat insert_into_bashrc >> ~/.zshrc
     source ~/.zshrc
 fi
