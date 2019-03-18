@@ -21,10 +21,13 @@ function refreshenv()
 
 #docker
 alias dope="docker-compose"
+alias doperr="docker-compose ps | grep Exit | xargs sh -c \"docker-compose up -d || true\""
 
 #amazon aws cli tool
 alias atest="eval $(aws ecr get-login --no-include-email --region us-west-2)"
 
+#sublime text update completions
+alias subl-update="cp -r $DEV_ROOT/MilordShortcuts/sublimetext/* ~/.config/sublime-text-3/Packages/User"
 
 #fun stuff
 alias music="chromium $MUSIC_URL &"

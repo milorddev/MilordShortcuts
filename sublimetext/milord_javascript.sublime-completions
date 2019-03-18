@@ -1,0 +1,8 @@
+{
+	"scope":"source.js, source.ts",
+	"completions":
+	[
+		{"trigger":"colog", "contents":"console.log('$1')"},
+		{"trigger":"conlog", "contents":"console.log('$1',$1)"},
+	]
+}
