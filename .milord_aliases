@@ -2,11 +2,15 @@
 DEV_ROOT=~/Projects
 MUSIC_URL="https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ-wxIJ"
 
+#general misc
+bind 'TAB:menu-complete'
+
 
 #general shortcuts
 alias dev="cd $DEV_ROOT"
 alias milord="nano ~/.milord_aliases"
 alias milord-update="cp ~/.milord_aliases $DEV_ROOT/MilordShortcuts/.milord_aliases"
+alias explore="nautilus . &"
 function refreshenv()
 {
     if [ -n "`$SHELL -c 'echo $ZSH_VERSION'`" ]; then
@@ -23,8 +27,30 @@ function refreshenv()
 alias dope="docker-compose"
 alias doperr="docker-compose ps | grep Exit | xargs sh -c \"docker-compose up -d || true\""
 
+function dbash()
+{
+	docker-compose exec bash $@
+}
+
+alias check="docker-compose ps"
+function dopeup()
+{
+	docker-compose up -d
+	docker-compose logs -f &
+		while [ !$(docker-compose logs clincard | grep "Starting ClamAV virus") ]; do
+			echo "Waiting for ClamAV to start..."
+			sleep 1s
+		done
+	sleep 1s
+	ps -eaf | grep docker-compose | grep logs | awk '{print $2}' | xargs kill -9
+}
+
+
+#kubernetes
+alias kube="kubectl"
+
 #amazon aws cli tool
-alias atest="eval $(aws ecr get-login --no-include-email --region us-west-2)"
+alias aws-login="eval $(aws ecr get-login --no-include-email --region us-west-2)"
 
 #sublime text update completions
 alias subl-update="cp -r $DEV_ROOT/MilordShortcuts/sublimetext/* ~/.config/sublime-text-3/Packages/User"
@@ -39,8 +65,17 @@ alias ginit="git init"
 alias pull="git pull"
 alias push="git push"
 alias glog="git log"
-alias chout="git checkout"
 alias gitmit="git commit -m"
+
+#alias chout="git checkout"
+function chout()
+{
+	if [ $# -eq 0 ]; then
+		git checkout .
+	else
+		git checkout $@ 
+	fi
+}
 
 function gitall-branches() #Created by Greg Ruane
 {
