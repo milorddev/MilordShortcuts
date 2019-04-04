@@ -1,5 +1,5 @@
 {
-	"scope":"source.js, source.ts",
+	"scope":"source.js, source.ts, source.tsx, source.component.ts, source.component.spec.ts, source.module.ts",
 	"completions":
 	[
 		{"trigger":"colog", "contents":"console.log('$1')"},

@@ -4,12 +4,31 @@ MUSIC_URL="https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ
 
 #general misc
 bind 'TAB:menu-complete'
+alias bthemes="cd ~/.bash-it/themes && ls"
 
+#ng
+alias buildprod="ng build --aot --prod --output-hashing=none"
+
+#python
+alias ae="source ./venv/bin/activate"
+alias de="deactivate"
 
 #general shortcuts
 alias dev="cd $DEV_ROOT"
 alias milord="nano ~/.milord_aliases"
 alias milord-update="cp ~/.milord_aliases $DEV_ROOT/MilordShortcuts/.milord_aliases"
+
+function milord-commit()
+{ 
+	currpath = $PWD
+	cd $DEV_ROOT/MilordShortcuts 
+	git add . 
+	git commit 
+	git status
+	cd $currpath
+}
+
+alias milord-push="cd $DEV_ROOT/MilordShortcuts && git push &"
 alias explore="nautilus . &"
 function refreshenv()
 {
@@ -29,10 +48,28 @@ alias doperr="docker-compose ps | grep Exit | xargs sh -c \"docker-compose up -d
 
 function dbash()
 {
-	docker-compose exec bash $@
+	docker-compose exec $@ /bin/bash
 }
 
-alias check="docker-compose ps"
+function dreset()
+{
+	docker-compose stop $1
+	docker-compose rm $1
+	docker-compose up -d --build $1
+	docker-compose logs -f $1
+}
+
+#alias check="docker-compose ps"
+function check()
+{
+        if [ $# -eq 0 ]; then
+                docker-compose ps
+        else
+                docker-compose ps | grep $@
+        fi
+}
+
+
 function dopeup()
 {
 	docker-compose up -d
@@ -56,7 +93,7 @@ alias aws-login="eval $(aws ecr get-login --no-include-email --region us-west-2)
 alias subl-update="cp -r $DEV_ROOT/MilordShortcuts/sublimetext/* ~/.config/sublime-text-3/Packages/User"
 
 #fun stuff
-alias music="chromium $MUSIC_URL &"
+alias music="google-chrome $MUSIC_URL &"
 
 #git command shortcuts
 alias stats="git status"
@@ -66,6 +103,25 @@ alias pull="git pull"
 alias push="git push"
 alias glog="git log"
 alias gitmit="git commit -m"
+alias branchall="git branch --all"
+alias stashdiff="git stash show num -p"
+
+#Written by Isaac Lubanko
+function giturl()
+{
+	BROWSER=chromium
+​
+	# flips the remote url around, cuts off the .git (or tig.) then flips it back around
+	# kind of hacky but it works
+	repo=$(git config --get remote.origin.url | rev | cut -c5- | rev)
+​
+	# isolates the branch you are currenty checked out to, removes * 
+	branch=$(git branch | grep \* | cut -d ' ' -f2)
+​
+	# forms these into a url and navigates there in your browser
+	$BROWSER $repo/tree/$branch
+}
+
 
 #alias chout="git checkout"
 function chout()
