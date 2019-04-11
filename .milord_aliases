@@ -1,4 +1,44 @@
 #configs - edit them to your liking
+
+###ALIAS###
+#bthemes
+#buildprod
+#ae
+#de
+#dev
+#milord
+#milord-update
+#explore
+#dope
+#doperr
+#kubl
+#aws-login
+#subl-update
+#music
+#stats
+#adal
+#ginit
+#pull
+#push
+#glog
+#gitmit
+#branchall
+#stashdiff
+
+###FUNCTIONS###
+#milord-commit()
+#milord-push()
+#refreshenv()
+#dbash()
+#dreset()
+#check()
+#dopeup()
+#giturl()
+#chout()
+#gitall-branches()
+#pullall()
+
+
 DEV_ROOT=~/Projects
 MUSIC_URL="https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ-wxIJ"
 
@@ -23,12 +63,20 @@ function milord-commit()
 	currpath = $PWD
 	cd $DEV_ROOT/MilordShortcuts 
 	git add . 
-	git commit 
+	git commit
 	git status
 	cd $currpath
 }
 
-alias milord-push="cd $DEV_ROOT/MilordShortcuts && git push &"
+
+function milord-push()
+{
+	currpath = $PWD
+	cd $DEV_ROOT/MilordShortcuts
+	git push
+	cd $currpath
+}
+
 alias explore="nautilus . &"
 function refreshenv()
 {
@@ -84,7 +132,7 @@ function dopeup()
 
 
 #kubernetes
-alias kube="kubectl"
+alias kubl="kubectl"
 
 #amazon aws cli tool
 alias aws-login="eval $(aws ecr get-login --no-include-email --region us-west-2)"
@@ -109,17 +157,18 @@ alias stashdiff="git stash show num -p"
 #Written by Isaac Lubanko
 function giturl()
 {
-	BROWSER=chromium
-​
+​	repo=$(git config --get remote.origin.url)
 	# flips the remote url around, cuts off the .git (or tig.) then flips it back around
 	# kind of hacky but it works
-	repo=$(git config --get remote.origin.url | rev | cut -c5- | rev)
+	if [[ $(git config --get remote.origin.url | grep .git) ]]
+	then
+		repo=$(git config --get remote.origin.url | sed 's/git@/https:\\\\/')
+	fi
 ​
 	# isolates the branch you are currenty checked out to, removes * 
-	branch=$(git branch | grep \* | cut -d ' ' -f2)
-​
-	# forms these into a url and navigates there in your browser
-	$BROWSER $repo/tree/$branch
+	#branch=$(git branch | grep \* | cut -d ' ' -f2)
+	echo $repo
+	google-chrome $repo &
 }
 
 
@@ -154,3 +203,22 @@ function gitall-branches() #Created by Greg Ruane
         done
     )
 }
+
+function pullall()
+{
+    # subshell to revert cd
+    (
+        output=()
+        for subdir in $(find $DEV_ROOT -maxdepth 2 -type d | sort); do
+            if [ -L "$subdir" ]; then
+                continue
+            fi
+
+            # git submodules use a file, standalones use a dir
+            if [ -f "$subdir/.git" ] || [ -d "$subdir/.git" ]; then
+                cd $subdir && git pull
+            fi
+        done
+    )
+}
+
