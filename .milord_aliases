@@ -162,7 +162,7 @@ function giturl()
 	# kind of hacky but it works
 	if [[ $(git config --get remote.origin.url | grep .git) ]]
 	then
-		repo=$(git config --get remote.origin.url | sed 's/git@/https:\\\\/')
+		repo=$(git config --get remote.origin.url | sed 's/git@/https:\/\//' | sed 's/m:/m\//')
 	fi
 ​
 	# isolates the branch you are currenty checked out to, removes * 
@@ -222,3 +222,20 @@ function pullall()
     )
 }
 
+function choutall()
+{
+    # subshell to revert cd
+    (
+        output=()
+        for subdir in $(find $PWD -maxdepth 2 -type d | sort); do
+            if [ -L "$subdir" ]; then
+                continue
+            fi
+
+            # git submodules use a file, standalones use a dir
+            if [ -f "$subdir/.git" ] || [ -d "$subdir/.git" ]; then
+                cd $subdir && git checkout $@
+            fi
+        done
+    )
+}
