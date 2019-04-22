@@ -204,6 +204,8 @@ function gitall-branches() #Created by Greg Ruane
     )
 }
 
+alias getLatestImage="aws ecr describe-images --repository-name rideshare-service --query 'sort_by(imageDetails,& imagePushedAt)[-1]'"
+
 function pullall()
 {
     # subshell to revert cd
@@ -216,7 +218,9 @@ function pullall()
 
             # git submodules use a file, standalones use a dir
             if [ -f "$subdir/.git" ] || [ -d "$subdir/.git" ]; then
-                cd $subdir && git pull
+                echo $subdir
+		cd $subdir && git pull
+		echo ""
             fi
         done
     )
