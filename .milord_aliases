@@ -1,43 +1,6 @@
-#configs - edit them to your liking
-
-###ALIAS###
-#bthemes
-#buildprod
-#ae
-#de
-#dev
-#milord
-#milord-update
-#explore
-#dope
-#doperr
-#kubl
-#aws-login
-#subl-update
-#music
-#stats
-#adal
-#ginit
-#pull
-#push
-#glog
-#gitmit
-#branchall
-#stashdiff
-
-###FUNCTIONS###
-#milord-commit()
-#milord-push()
-#refreshenv()
-#dbash()
-#dreset()
-#check()
-#dopeup()
-#giturl()
-#chout()
-#gitall-branches()
-#pullall()
-
+#=============================
+#=== MILORD BASH SHORTCUTS ===
+#=============================
 
 DEV_ROOT=~/Projects
 MUSIC_URL="https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ-wxIJ"
@@ -57,7 +20,9 @@ alias de="deactivate"
 alias dev="cd $DEV_ROOT"
 alias milord="nano ~/.milord_aliases"
 alias milord-update="cp ~/.milord_aliases $DEV_ROOT/MilordShortcuts/.milord_aliases"
+alias hosts="sudo nano /etc/hosts"
 
+#commits this alias file
 function milord-commit()
 { 
 	currpath = $PWD
@@ -68,7 +33,7 @@ function milord-commit()
 	cd $currpath
 }
 
-
+#pushes this alias file to the remote repo
 function milord-push()
 {
 	currpath = $PWD
@@ -77,7 +42,10 @@ function milord-push()
 	cd $currpath
 }
 
+#opens the file explorer at current location
 alias explore="nautilus . &"
+
+#Refreshes the ".bashrc" file
 function refreshenv()
 {
     if [ -n "`$SHELL -c 'echo $ZSH_VERSION'`" ]; then
@@ -92,13 +60,26 @@ function refreshenv()
 
 #docker
 alias dope="docker-compose"
+#docker ups everything that is exited
 alias doperr="docker-compose ps | grep Exit | xargs sh -c \"docker-compose up -d || true\""
+#logs only the last 1000 lines of container
+alias dlogs="docker-compose logs -f $1 --tail 1000"
+#opens the posgres container for clincard (work)
+alias clindb="docker-compose run --rm db psql -h db -U postgres"
 
+#execs into the container
 function dbash()
 {
 	docker-compose exec $@ /bin/bash
 }
 
+#manual switch of kube configs context
+function kubl-switch()
+{
+	cp ~/.kube/conf.d/$@ ~/.kube/config
+}
+
+#stops, removes, ups, and logs the container
 function dreset()
 {
 	docker-compose stop $1
@@ -107,7 +88,7 @@ function dreset()
 	docker-compose logs -f $1
 }
 
-#alias check="docker-compose ps"
+#docker ps or ps a specific container
 function check()
 {
         if [ $# -eq 0 ]; then
@@ -117,7 +98,7 @@ function check()
         fi
 }
 
-
+#ups all containers, then waits for clincard to start fully (work)
 function dopeup()
 {
 	docker-compose up -d
@@ -135,26 +116,36 @@ function dopeup()
 alias kubl="kubectl"
 
 #amazon aws cli tool
-alias aws-login="eval $(aws ecr get-login --no-include-email --region us-west-2)"
+#alias aws-login="eval $(aws ecr get-login --no-include-email --region us-west-2)"
 
 #sublime text update completions
 alias subl-update="cp -r $DEV_ROOT/MilordShortcuts/sublimetext/* ~/.config/sublime-text-3/Packages/User"
 
-#fun stuff
+#opens my awesome music playlist
 alias music="google-chrome $MUSIC_URL &"
 
-#git command shortcuts
+#git commands
+#status
 alias stats="git status"
+#add
 alias adal="git add ."
+#init
 alias ginit="git init"
+#pull
 alias pull="git pull"
+#push
 alias push="git push"
+#log
 alias glog="git log"
+#commits with message
 alias gitmit="git commit -m"
+#looks at all remote and local branches
 alias branchall="git branch --all"
+#shows the stashed diff
 alias stashdiff="git stash show num -p"
 
 #Written by Isaac Lubanko
+#gets the url of the remote repo
 function giturl()
 {
 ​	repo=$(git config --get remote.origin.url)
@@ -172,7 +163,7 @@ function giturl()
 }
 
 
-#alias chout="git checkout"
+#checkout all or specific stuff
 function chout()
 {
 	if [ $# -eq 0 ]; then
@@ -182,6 +173,7 @@ function chout()
 	fi
 }
 
+#see ALL the current branches of everything in your main development folder
 function gitall-branches() #Created by Greg Ruane
 {
     # subshell to revert cd
@@ -204,8 +196,10 @@ function gitall-branches() #Created by Greg Ruane
     )
 }
 
+#get the last kube image name
 alias getLatestImage="aws ecr describe-images --repository-name rideshare-service --query 'sort_by(imageDetails,& imagePushedAt)[-1]'"
 
+#pull and prunes ALL repos in your dev folder
 function pullall()
 {
     # subshell to revert cd
@@ -219,13 +213,14 @@ function pullall()
             # git submodules use a file, standalones use a dir
             if [ -f "$subdir/.git" ] || [ -d "$subdir/.git" ]; then
                 echo $subdir
-		cd $subdir && git pull
+		cd $subdir && git pull && git pull --prune
 		echo ""
             fi
         done
     )
 }
 
+#switches the branch of every submodule and repo to specific one
 function choutall()
 {
     # subshell to revert cd
@@ -243,3 +238,13 @@ function choutall()
         done
     )
 }
+
+#attaches the docker instance to the shell
+function dattach() 
+{
+	args=$1
+	appendage="_1"
+	dname=$args$appendage
+	docker attach $(docker ps -qf "name=$dname")
+}
+
