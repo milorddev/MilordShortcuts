@@ -8,6 +8,8 @@ MUSIC_URL="https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ
 #general misc
 bind 'TAB:menu-complete'
 alias bthemes="cd ~/.bash-it/themes && ls"
+alias bashrc="sudo nano ~/.bashrc"
+alias clippyengine="cd ~/Projects/ClippyEditor/src/main/python/clippyengine"
 
 #ng
 alias buildprod="ng build --aot --prod --output-hashing=none"
@@ -19,7 +21,6 @@ alias de="deactivate"
 #general shortcuts
 alias dev="cd $DEV_ROOT"
 alias milord="nano ~/.milord_aliases"
-alias milord-update="cp ~/.milord_aliases $DEV_ROOT/MilordShortcuts/.milord_aliases"
 alias hosts="sudo nano /etc/hosts"
 
 #commits this alias file
@@ -74,7 +75,7 @@ function dbash()
 }
 
 #manual switch of kube configs context
-function kubl-switch()
+function kuswitch()
 {
 	cp ~/.kube/conf.d/$@ ~/.kube/config
 }
@@ -111,12 +112,20 @@ function dopeup()
 	ps -eaf | grep docker-compose | grep logs | awk '{print $2}' | xargs kill -9
 }
 
+alias piip="cat /var/lib/misc/dnsmasq.leases | cut -d ' ' -f 3"
 
 #kubernetes
-alias kubl="kubectl"
+alias ku="kubectl"
+alias kupeek="kubectl get deployments.apps $1 -o yaml"
 
 #amazon aws cli tool
 #alias aws-login="eval $(aws ecr get-login --no-include-email --region us-west-2)"
+function aws-login()
+{
+   cd ~ && ./awsmfa.sh $1
+   . ~/.aws/.mfa_creds   
+   eval $(aws ecr get-login --no-include-email --region us-west-2)
+}
 
 #sublime text update completions
 alias subl-update="cp -r $DEV_ROOT/MilordShortcuts/sublimetext/* ~/.config/sublime-text-3/Packages/User"
@@ -143,6 +152,9 @@ alias gitmit="git commit -m"
 alias branchall="git branch --all"
 #shows the stashed diff
 alias stashdiff="git stash show num -p"
+#pulls then creates a new branch
+alias newbranch="git pull && git checkout -b $@"
+#prunes local branches based on remote
 
 #Written by Isaac Lubanko
 #gets the url of the remote repo
@@ -171,6 +183,12 @@ function chout()
 	else
 		git checkout $@ 
 	fi
+}
+
+function prunelocal()
+{
+	git pull --prune
+	git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
 }
 
 #see ALL the current branches of everything in your main development folder
@@ -213,7 +231,7 @@ function pullall()
             # git submodules use a file, standalones use a dir
             if [ -f "$subdir/.git" ] || [ -d "$subdir/.git" ]; then
                 echo $subdir
-		cd $subdir && git pull && git pull --prune
+		cd $subdir && git pull && git pull --prune && git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
 		echo ""
             fi
         done
