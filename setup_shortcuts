@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp .milord_aliases ~/.milord_aliases
+ln -s .milord_aliases ~/.milord_aliases
 
 #regular bash terminal
 if [ -f ~/.bashrc ] 
