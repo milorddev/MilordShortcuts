@@ -29,8 +29,19 @@ function kuse()
 	kubectl config get-contexts;
 }
 
+function customimage()
+{
+	custom=$@
+	custom="${custom}"
+	docker build -t clincard:base -f docker/base-deploy .
+	docker build -t 160116585046.dkr.ecr.us-west-2.amazonaws.com/clincard:app-${custom} -f docker/app-image .
+	docker push 160116585046.dkr.ecr.us-west-2.amazonaws.com/clincard:app-${custom}
+}
+
+
 alias kupods="kubectl get pods"
 alias kube="kubectl"
+alias kconfig="kubectl config"
 
 function kubash()
 {
@@ -159,7 +170,7 @@ alias pull="git pull"
 #push
 alias push="git push"
 #log
-alias glog="git log"
+alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
 #commits with message
 alias gitmit="git commit -m"
 #looks at all remote and local branches
