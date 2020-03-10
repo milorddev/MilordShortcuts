@@ -14,14 +14,38 @@ alias rmpyc="find . -name \*.pyc -delete"
 #ng
 alias buildprod="ng build --aot --prod --output-hashing=none"
 
+#proxy couch
+function couchproxy()
+{
+	couchpod="$*"
+	kubectl port-forward "$(couchpod)" 5584:5984
+}
+
 #python
 alias ae="source ./venv/bin/activate"
 alias de="deactivate"
+
+function fuck()
+{
+	fuckwhat="$*"
+	if [[ $fuckwhat == "you" ]]; then
+		echo "fuck you too"
+	else
+		echo "yeah... fuck $fuckwhat"
+	fi
+}
 
 #general shortcuts
 alias dev="cd $DEV_ROOT"
 alias milord="nano ~/.milord_aliases"
 alias hosts="sudo nano /etc/hosts"
+
+function kunamespace()
+{
+	currentcontext="$(kubectl config view --minify --output 'jsonpath={..current-context}')"
+	kubectl config set-context $currentcontext --namespace $*
+	kubectl config get-contexts
+}
 
 function kuse()
 {
@@ -38,10 +62,10 @@ function customimage()
 	docker push 160116585046.dkr.ecr.us-west-2.amazonaws.com/clincard:app-${custom}
 }
 
-
+alias rk="bash /home/milord/Projects/GreenphireDevTools/clincard/scripts/LABS/launch_sqa.sh"
 alias kupods="kubectl get pods"
 alias kube="kubectl"
-alias kconfig="kubectl config"
+alias kuconfig="kubectl config"
 
 function kubash()
 {
@@ -291,3 +315,15 @@ function dattach()
 	docker attach $(docker ps -qf "name=$dname")
 }
 
+
+function kuportforward()
+{
+	podname=$@
+	kubectl describe pod $podname | grep Port
+	echo "Which pod port?"
+	read kuport
+	echo "Which local port do you want to use?"
+	read localport
+	kubectl port-forward $podname $localport:$kuport
+	
+}
