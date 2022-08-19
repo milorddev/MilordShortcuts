@@ -2,7 +2,7 @@
 #=== MILORD BASH SHORTCUTS ===
 #=============================
 
-DEV_ROOT=~/Projects
+DEV_ROOT=/home/Projects/Dappd
 MUSIC_URL="https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ-wxIJ"
 
 #general misc
@@ -13,6 +13,19 @@ alias clippyengine="cd ~/Projects/ClippyEditor/src/main/python/clippyengine"
 alias rmpyc="find . -name \*.pyc -delete"
 #ng
 alias buildprod="ng build --aot --prod --output-hashing=none"
+alias ndir="cd /etc/nginx/sites-available"
+alias devops="dev && cd devops/webhooks"
+alias d="devops"
+alias n="ndir"
+alias shit="d && docker compose ps --services | xargs -I {} docker compose up -d {} || true && check"
+
+
+#pm2 
+alias plogs="pm2 logs"
+alias plist="pm2 list"
+alias pls="pm2 list"
+alias monit="pm2 monit"
+alias del="pm2 del"
 
 #proxy couch
 function couchproxy()
@@ -76,7 +89,7 @@ function kubash()
 function milord-commit()
 { 
 	currpath = $PWD
-	cd $DEV_ROOT/MilordShortcuts 
+	cd $DEV_ROOT/../MilordShortcuts 
 	git add . 
 	git commit
 	git status
@@ -87,7 +100,7 @@ function milord-commit()
 function milord-push()
 {
 	currpath = $PWD
-	cd $DEV_ROOT/MilordShortcuts
+	cd $DEV_ROOT/../MilordShortcuts
 	git push
 	cd $currpath
 }
@@ -109,6 +122,7 @@ function refreshenv()
 }
 
 #docker
+alias docker-compose="docker compose"
 alias dope="docker-compose"
 #docker ups everything that is exited
 alias doperr="docker-compose ps | grep Exit | xargs sh -c \"docker-compose up -d || true\""
@@ -120,7 +134,7 @@ alias clindb="docker-compose run --rm db psql -h db -U postgres"
 #execs into the container
 function dbash()
 {
-	docker-compose exec $@ /bin/bash
+	docker-compose exec $@ /bin/sh
 }
 
 #manual switch of kube configs context
