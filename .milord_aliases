@@ -2,15 +2,45 @@
 #=== MILORD BASH SHORTCUTS ===
 #=============================
 
-DEV_ROOT=~/Projects
+DEV_ROOT=/media/milord/ScienceDrive/Projects
 MUSIC_URL="https://music.youtube.com/playlist?list=PLY_FQXauSxlCyhLLYaOrxIX_4IlQ-wxIJ"
 
 #general misc
-bind 'TAB:menu-complete'
+alias python="python3"
 alias bthemes="cd ~/.bash-it/themes && ls"
 alias bashrc="sudo nano ~/.bashrc"
 alias clippyengine="cd ~/Projects/ClippyEditor/src/main/python/clippyengine"
-alias rmpyc="find . -name \*.pyc -delete"
+
+alias start="nautilus $*"
+alias openshot="flatpak run org.openshot.OpenShot"
+alias xp="expressvpn"
+alias docker-compose="docker compose"
+
+function oserve() {
+   if pgrep ollama > /dev/null; then
+	service ollama stop
+	pgrep ollama | xargs -I {} "kill -9 {}"
+	sleep 2
+   fi
+   ollama serve
+}
+function ostop() {
+	service ollama stop
+	pgrep ollama | xargs -I {} kill -9 {}
+}
+
+alias orion="memgpt run --persona orion --human milord --agent orionbot --strip-ui --no-verify --first"
+
+function dappd() {
+    # if no arguments, go to the dappd folder
+    if [ $# -eq 0 ]; then
+        cd $DEV_ROOT/Dappd
+    else
+        # cd to the dappd folder and then to the specified folder
+        cd $DEV_ROOT/Dappd/$1
+    fi
+}
+
 #ng
 alias buildprod="ng build --aot --prod --output-hashing=none"
 
@@ -180,7 +210,10 @@ function aws-login()
 alias subl-update="cp -r $DEV_ROOT/MilordShortcuts/sublimetext/* ~/.config/sublime-text-3/Packages/User"
 
 #opens my awesome music playlist
-alias music="google-chrome $MUSIC_URL &"
+# alias music="google-chrome $MUSIC_URL &"
+
+# open spotify with my awesome music playlist
+alias music="spotify --uri=spotify:playlist:2LiQYldccAT84CLgv7l98U"
 
 #git commands
 #status
@@ -189,6 +222,8 @@ alias stats="git status"
 alias adal="git add ."
 #init
 alias ginit="git init"
+#checkout
+alias chout="git checkout"
 #pull
 alias pull="git pull"
 #push
@@ -203,6 +238,33 @@ alias branchall="git branch --all"
 alias stashdiff="git stash show num -p"
 #pulls then creates a new branch
 alias newbranch="git pull && git checkout -b $@"
+#ignores the file permission stuff, only text changes
+alias gitfix="git config core.filemode false"
+
+#converts https to ssh for git
+function fixgit() {
+    # Get the current remote URL
+    local remote_url=$(git remote get-url origin)
+
+    # Check if the remote URL is already in SSH format
+    if [[ $remote_url == git@* ]]; then
+        echo "Remote URL is already an SSH URL."
+        return
+    fi
+
+    # Transform HTTPS URL into SSH URL
+    # Assumes GitHub, GitLab, or Bitbucket as the host.
+    local ssh_url=$(echo $remote_url | sed -e 's/https:\/\/\([^@]*@\)\?\([^\/]*\)\//git@\2:/')
+
+    # Remove the existing remote
+    git remote rm origin
+
+    # Add the new SSH remote
+    git remote add origin $ssh_url
+
+    echo "Remote URL changed to SSH: $ssh_url"
+}
+
 #prunes local branches based on remote
 
 #Written by Isaac Lubanko
