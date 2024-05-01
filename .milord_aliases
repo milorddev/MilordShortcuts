@@ -16,6 +16,10 @@ alias openshot="flatpak run org.openshot.OpenShot"
 alias xp="expressvpn"
 alias docker-compose="docker compose"
 
+function aw() {
+	start /home/milord/Documents/activitywatch-v0.12.2-linux-x86_64/activitywatch
+}
+
 function oserve() {
    if pgrep ollama > /dev/null; then
 	service ollama stop
@@ -402,4 +406,26 @@ function kuportforward()
 	read localport
 	kubectl port-forward $podname $localport:$kuport
 	
+}
+
+
+function playmode() {
+	# Disable the left and right screens
+	xrandr --output HDMI-1-2 --off
+	xrandr --output HDMI-0 --off
+
+	# Enable the middle screen and set resolution and refresh rate
+	xrandr --output DP-0 --mode 1920x1080 --rate 239.76 --primary
+}
+
+
+function workmode() {
+    # Enable and configure the left screen
+    xrandr --output HDMI-1-2 --mode 1920x1080 --rate 60 --rotate left --pos 0x0
+
+    # Enable and configure the middle screen
+    xrandr --output DP-0 --mode 1920x1080 --rate 60 --pos 1080x550 --primary
+
+    # Enable and configure the right screen
+    xrandr --output HDMI-0 --mode 2560x1440 --rate 60 --pos 3000x550
 }
