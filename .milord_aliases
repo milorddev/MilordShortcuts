@@ -10,11 +10,28 @@ alias python="python3"
 alias bthemes="cd ~/.bash-it/themes && ls"
 alias bashrc="sudo nano ~/.bashrc"
 alias clippyengine="cd ~/Projects/ClippyEditor/src/main/python/clippyengine"
+alias ag='ag --path-to-ignore ~/.ignore'
 
 alias start="nautilus $*"
 alias openshot="flatpak run org.openshot.OpenShot"
 alias xp="expressvpn"
 alias docker-compose="docker compose"
+alias swappy="sudo swapoff -a; sudo swapon -a"
+alias hackssh="ssh root@45.33.73.89"
+
+alias lodge="firefox https://portal.pamasons.org/ous/652"
+alias sec="firefox https://outlook.office.com/mail/"
+alias dues="firefox https://portal.pamasons.org/ou_accounting/652/members"
+
+alias vicpull="firefox https://github.com/VicunaFinance-com/vicuna-frontend/pulls"
+alias unreal="~/gamedev/UnrealEngine5_4_4/Engine/Binaries/Linux/UnrealEditor"
+alias triarch="cd ~/gamedev/UnrealProjects/Triarch"
+alias trade="/home/milord/thinkorswim/thinkorswim"
+alias milordvnc="vncserver -geometry 1920x1080 -rfbport 1776 -xstartup ~/.vnc/xstartup"
+
+function killp() {
+	sudo kill -9 `sudo lsof -t -i:$1`
+}
 
 function aw() {
 	start /home/milord/Documents/activitywatch-v0.12.2-linux-x86_64/activitywatch
@@ -33,7 +50,8 @@ function ostop() {
 	pgrep ollama | xargs -I {} kill -9 {}
 }
 
-alias orion="memgpt run --persona orion --human milord --agent orionbot --strip-ui --no-verify --first"
+alias sage="memgpt run --persona chat --human milord --agent chat --strip-ui --no-verify --first"
+alias aider="aider --model ollama/llama3.1:8b-instruct-q6_K"
 
 function dappd() {
     # if no arguments, go to the dappd folder
@@ -116,7 +134,7 @@ alias kuconfig="kubectl config"
 
 function kubash()
 {
-	kubectl exec -it $@ -- /bin/bash;
+	kubectl exec -it $@ -- /bin/sh;
 }
 
 #commits this alias file
@@ -314,11 +332,16 @@ function chout()
 	fi
 }
 
-function prunelocal()
-{
-	git pull --prune
-	git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
+function prunelocal () {
+  git fetch --prune
+  for branch in $(git branch --format='%(refname:short)' | grep -v '\*'); do
+    if ! git show-ref --quiet --verify "refs/remotes/origin/$branch"; then
+      echo "Deleting stale local branch: $branch"
+      git branch -d "$branch"
+    fi
+  done
 }
+
 
 #see ALL the current branches of everything in your main development folder
 function gitall-branches() #Created by Greg Ruane
@@ -410,22 +433,79 @@ function kuportforward()
 
 
 function playmode() {
+	#~/Documents/layouts/playmode.sh
 	# Disable the left and right screens
-	xrandr --output HDMI-1-2 --off
+	xrandr --output HDMI-1-3 --off
 	xrandr --output HDMI-0 --off
 
+	#xrandr --output HDMI-1-2 --mode 1920x1080 --rate 60 --rotate left --pos 0x0
+	#xrandr --output DP-0 --mode 1920x1080 --rate 239.76 --pos 1080x550 --primary
 	# Enable the middle screen and set resolution and refresh rate
-	xrandr --output DP-0 --mode 1920x1080 --rate 239.76 --primary
+	xrandr --output DP-2 --mode 1920x1080 --rate 239.76 --primary
 }
 
 
 function workmode() {
+    #~/Documents/layouts/workmode.sh
     # Enable and configure the left screen
-    xrandr --output HDMI-1-2 --mode 1920x1080 --rate 60 --rotate left --pos 0x0
+    xrandr --output HDMI-1-3 --mode 1920x1080 --rate 60 --rotate left --pos 0x0
 
     # Enable and configure the middle screen
-    xrandr --output DP-0 --mode 1920x1080 --rate 60 --pos 1080x550 --primary
+    xrandr --output DP-2 --mode 1920x1080 --rate 60 --pos 1080x550 --primary
 
     # Enable and configure the right screen
     xrandr --output HDMI-0 --mode 2560x1440 --rate 60 --pos 3000x550
 }
+
+
+function vicuna() {
+	echo "starting vicuna deployment"
+	cd /media/milord/ScienceDrive/Projects/Dappd/vicuna-frontend
+	git checkout main
+	git pull origin main --no-edit
+	git push dappd main
+	git checkout prod
+	git pull
+	git pull dappd main --no-edit
+	git push dappd prod
+	echo "Done with vicuna deploying"
+}
+
+function startbots() {
+	nvm use 20
+	# cd /media/milord/ScienceDrive/Projects/raydium-automate
+	#npm run start
+	cd /media/milord/ScienceDrive/Projects/Dappd/arbie-bot
+	npm run legacy
+	/media/milord/ScienceDrive/Projects/Dappd/stasis-bots/start-buyer.sh
+	cd ~
+}
+
+function stablediffusion() {
+	pyenv shell 3.10.5
+	cd /media/milord/ScienceDrive/Projects/stable-diffusion-webui
+	./webui.sh
+}
+
+
+function gs() {
+
+find $1 \( -path '*/node_modules/*' -o -path '*/dist/*' -o -path '*/build/*' -o -path '*/.git/*' -o -path '*/assets/*' \) -prune -o \
+  -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.json' -o -name '*.css' -o -name '*.md' -o -name '*.py' -o -name '*.cpp' \) -print0 \
+| sort -z \
+| xargs -0 -I{} sh -c 'printf "\n===== FILE: %s =====\n" "{}"; sed -n "1,2000p" "{}"'
+
+}
+
+
+function webmtomp4() {
+ffmpeg -i $1.webm \
+  -c:v libx264 -preset veryfast -crf 28 -pix_fmt yuv420p \
+  -c:a aac -b:a 96k \
+  -movflags +faststart \
+  -vf "scale=1280:-2" \
+  $1.mp4
+
+}
+
+alias pmtiles="~/Downloads/go-pmtiles_1.28.1_Linux_x86_64/pmtiles"
